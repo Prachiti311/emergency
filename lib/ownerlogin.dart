@@ -96,7 +96,7 @@ class _OwnerLoginState extends State<OwnerLogin> {
             // Handle case when the document does not exist
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Owner information not found.'),
+                content: Text('Admin information not found.'),
                 duration: Duration(seconds: 2),
               ),
             );
@@ -107,7 +107,7 @@ class _OwnerLoginState extends State<OwnerLogin> {
           await FirebaseAuth.instance.signOut();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Only owners are allowed to sign in.'),
+              content: Text('Only Admins are allowed to sign in.'),
               duration: Duration(seconds: 2),
             ),
           );
@@ -142,7 +142,7 @@ class _OwnerLoginState extends State<OwnerLogin> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          'Owner Login',
+          'Admin Login',
           style: TextStyle(fontSize: 28, color: Colors.white),
         ),
         backgroundColor: Colors.grey[500],
@@ -156,7 +156,7 @@ class _OwnerLoginState extends State<OwnerLogin> {
           children: [
             SizedBox(height: 60),
             Text(
-              'Welcome Back, Owner!',
+              'Welcome Back, Admin!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),

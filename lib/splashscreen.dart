@@ -78,7 +78,7 @@ class SplashScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/img.png', // Replace with your logo asset path
+                'assets/images/adanipower.png', // Replace with your logo asset path
                 width: 250.0,
                 height: 250.0,
                 fit: BoxFit.contain,
@@ -95,7 +95,7 @@ class SplashScreen extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => OwnerLogin()),
                       );
                       // Action when Owner button is pressed
-                      print('Owner button pressed');
+                      print('Admin button pressed');
                     },
                     style: ElevatedButton.styleFrom(
                       elevation: 2,
@@ -106,7 +106,7 @@ class SplashScreen extends StatelessWidget {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                     ),
-                    child: const Text('Owner'),
+                    child: const Text('Admin'),
                   ),
                   const SizedBox(width: 7.0), // Add spacing between buttons
                   ElevatedButton(

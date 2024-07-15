@@ -348,8 +348,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:hello/assemblypointspage.dart';
+import 'package:hello/declareemergencyscreen.dart';
+import 'package:hello/emergenciespage.dart';
+import 'package:hello/headofficersscreen.dart';
 import 'package:hello/ownerlogin.dart';
 import 'package:hello/ongoingemergenciesscreen.dart';
+import 'package:hello/splashscreen.dart';
+import 'package:hello/writenoticescreen.dart';
 import 'package:http/http.dart' as http;
 import 'main.dart'; // Import the main.dart file where flutterLocalNotificationsPlugin is initialized
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -610,6 +616,7 @@ class _OwnerManagementScreenState extends State<OwnerManagementScreen> {
   }
 }
 
+
 class OwnerDrawer extends StatelessWidget {
   final String? username;
 
@@ -633,19 +640,29 @@ class OwnerDrawer extends StatelessWidget {
               ),
             ),
           ),
+
           ListTile(
-            title: Text('Declare Emergencies'),
+            leading: Icon(Icons.notifications),
+            title: Text('Instruction for Emergencies'),
             onTap: () {
-              // Navigate to the declare emergencies screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EmergenciesPage()),
+              );
             },
           ),
           ListTile(
-            title: Text('Solutions for Emergencies'),
+            leading: Icon(Icons.people),
+            title: Text(' Officers Details'),
             onTap: () {
-              // Navigate to the solutions for emergencies screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HeadOfficersScreen()),
+              );
             },
           ),
           ListTile(
+            leading: Icon(Icons.warning),
             title: Text('Ongoing Emergencies'),
             onTap: () {
               Navigator.push(
@@ -655,17 +672,35 @@ class OwnerDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Icon(Icons.note),
             title: Text('Write a Notice'),
             onTap: () {
-              // Navigate to the write a notice screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WriteNoticeScreen()),
+              );
             },
           ),
           ListTile(
+            leading: Icon(Icons.map),
+            title: Text('Assembly Points Details'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AssemblyPointsPage()),
+              );
+            },
+          ),
+
+          ListTile(
+            leading: Icon(Icons.logout),
             title: Text('Log Out'),
             onTap: () {
               FirebaseAuth.instance.signOut();
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => OwnerLogin()));
+                context,
+                MaterialPageRoute(builder: (context) => SplashScreen()),
+              );
             },
           ),
         ],

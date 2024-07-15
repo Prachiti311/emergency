@@ -1,206 +1,4 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-// import 'package:url_launcher/url_launcher.dart';
-// import 'package:cloud_functions/cloud_functions.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-//
-// class UserReportScreen extends StatefulWidget {
-//   @override
-//   _UserReportScreenState createState() => _UserReportScreenState();
-// }
-//
-// class _UserReportScreenState extends State<UserReportScreen> {
-//   String? selectedEmergency;
-//   String? selectedLocation;
-//   List<String> emergencyItems = [
-//     'Fire',
-//     'Water',
-//     'Medical Emergency',
-//     'Chemical Leakage',
-//   ];
-//   List<String> locationItems = [
-//     'Building A',
-//     'Boiler Level 1',
-//     'Admin',
-//     'Canteen',
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(
-//           'Report an Emergency',
-//           style: TextStyle(color: Colors.grey[50]),
-//         ),
-//         backgroundColor: Color(0xFFBE1609),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: SingleChildScrollView(
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               SizedBox(height: 1),
-//               Padding(
-//                 padding: EdgeInsets.symmetric(horizontal: 135.0),
-//                 child: Image.asset(
-//                   'assets/images/report.png',
-//                   width: 100,
-//                   height: 100,
-//                   fit: BoxFit.contain,
-//                   alignment: Alignment.centerRight,
-//                 ),
-//               ),
-//               SizedBox(height: 65),
-//               DropdownButtonFormField<String>(
-//                 value: selectedEmergency,
-//                 items: emergencyItems.map((String value) {
-//                   return DropdownMenuItem<String>(
-//                     value: value,
-//                     child: Text(value),
-//                   );
-//                 }).toList(),
-//                 decoration: InputDecoration(
-//                   border: OutlineInputBorder(),
-//                   contentPadding: EdgeInsets.fromLTRB(12, 12, 8, 0),
-//                   labelText: "Select Emergency",
-//                 ),
-//                 onChanged: (String? value) {
-//                   setState(() {
-//                     selectedEmergency = value;
-//                   });
-//                 },
-//               ),
-//               SizedBox(height: 30),
-//               DropdownButtonFormField<String>(
-//                 value: selectedLocation,
-//                 items: locationItems.map((String value) {
-//                   return DropdownMenuItem<String>(
-//                     value: value,
-//                     child: Text(value),
-//                   );
-//                 }).toList(),
-//                 decoration: InputDecoration(
-//                   border: OutlineInputBorder(),
-//                   contentPadding: EdgeInsets.fromLTRB(12, 12, 8, 0),
-//                   labelText: "Select Location",
-//                 ),
-//                 onChanged: (String? value) {
-//                   setState(() {
-//                     selectedLocation = value;
-//                   });
-//                 },
-//               ),
-//               SizedBox(height: 40),
-//               Text(
-//                 'Note:',
-//                 style: TextStyle(
-//                   color: Colors.blue,
-//                   fontSize: 17,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//               Text(
-//                 'Please select an emergency type and location from the dropdown lists above. After selection, click on message or call button to report incident to owner .',
-//                 textAlign: TextAlign.justify,
-//                 style: TextStyle(fontSize: 15, color: Colors.black54),
-//               ),
-//               SizedBox(height: 130),
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: [
-//                   Container(
-//                     width: 150,
-//                     height: 50,
-//                     child: ElevatedButton.icon(
-//                       onPressed: () {
-//                         print('Sending a message to owner');
-//                         _sendMessageToOwner();
-//                       },
-//                       style: ElevatedButton.styleFrom(
-//                         foregroundColor: Colors.blue,
-//                       ),
-//                       icon: Icon(Icons.message),
-//                       label: Text('Message', style: TextStyle(fontSize: 16)),
-//                     ),
-//                   ),
-//                   Container(
-//                     width: 150,
-//                     height: 50,
-//                     child: ElevatedButton.icon(
-//                       onPressed: _makePhoneCall,
-//                       style: ElevatedButton.styleFrom(
-//                         foregroundColor: Colors.green,
-//                       ),
-//                       icon: Icon(Icons.call),
-//                       label: Text('Call', style: TextStyle(fontSize: 16)),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   void _sendMessageToOwner() async {
-//     if (selectedEmergency != null && selectedLocation != null) {
-//       String message = 'Emergency: $selectedEmergency, Location: $selectedLocation';
-//
-//       try {
-//         // Get the current user's document from the users collection
-//         DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser?.uid).get();
-//
-//         // Check if the user document exists and is not empty
-//         if (userSnapshot.exists && userSnapshot.data() != null) {
-//           // Access the username field from the user document
-//           String username = userSnapshot['username'];
-//
-//           // Send message to Firestore
-//           await FirebaseFirestore.instance.collection('messages').add({
-//             'message': message,
-//             'sender': FirebaseAuth.instance.currentUser?.uid,
-//             'username': username, // Add username to the message
-//             'timestamp': DateTime.now(),
-//           });
-//           print('Message sent to owner');
-//
-//           // Store emergency data in Firestore
-//           await FirebaseFirestore.instance.collection('emergencies').add({
-//             'type': selectedEmergency,
-//             'location': selectedLocation,
-//             'reportedBy': FirebaseAuth.instance.currentUser?.uid,
-//             'reportedByUsername': username, // Add username to the emergency data
-//             'timestamp': DateTime.now(),
-//           });
-//           print('Emergency data stored in Firestore');
-//
-//           // Reset selected emergency and location
-//           setState(() {
-//             selectedEmergency = null;
-//             selectedLocation = null;
-//           });
-//         } else {
-//           print('User document does not exist or is empty');
-//         }
-//       } catch (e) {
-//         print('Failed to send message: $e');
-//       }
-//     } else {
-//       print('Please select emergency and location first');
-//     }
-//   }
-//
-//
-//   void _makePhoneCall() async {
-//     print('Making a phone call to the owner');
-//     await FlutterPhoneDirectCaller.callNumber('7020357477');
-//   }
-// }
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
@@ -215,17 +13,54 @@ class UserReportScreen extends StatefulWidget {
 class _UserReportScreenState extends State<UserReportScreen> {
   String? selectedEmergency;
   String? selectedLocation;
+
+  //40
+  // List of emergency types and locations
   List<String> emergencyItems = [
+    'Chemical Release',
+    'Fire In coal',
+    'Fire in Electrical System',
+    'Fire in Control Room',
+    'Major Release of Fuel Oil ',
+    'Fire in Switch Yards',
+    'Fire in CT,PT',
+    'Boiler Explosion',
+    'Fire in Switch Yards',
+    'Fire in Transformer',
+    'Fire in Turbine Generator areas',
+    'Health Hazard Plastic Chemical Drums',
+    'Health Hazard Waste Ion exchange Resins',
+    'Health Hazard Used Oil',
+    'Health Hazard Used Batteries',
+    'Accident',
     'Fire',
-    'Water',
-    'Medical Emergency',
-    'Chemical Leakage',
+    'Bursting of Pressure Vessel',
+    'Collapse of Equip/Building Human Error',
+
   ];
+
+  // page 36
   List<String> locationItems = [
-    'Building A',
-    'Boiler Level 1',
-    'Admin',
-    'Canteen',
+    'Coal Yard',
+    'Tank Farm',
+    'Pipeline',
+    'D.G room',
+    'Cylinder Stores',
+    'Hydrogen Plant',
+    'Turbine Floor',
+    'D.M Plant',
+    'Laboratory',
+    'Chemical Dozing',
+    'TG Building 1 Roof',
+    'TG Building 2 Roof'
+    'TG Building 3 Roof',
+    'CPWH 1 Roof',
+    'CPWH 2 Roof',
+    'CPWH 3 Roof',
+    'AHP Control Room 1 Roof',
+    'AHP Control Room 2 Roof',
+    'AHP Control Room 3 Roof',
+
   ];
 
   @override
@@ -233,7 +68,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Report an Emergency',
+          'Inform Emergency',
           style: TextStyle(color: Colors.grey[50]),
         ),
         backgroundColor: Color(0xFFBE1609),
@@ -256,6 +91,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
                 ),
               ),
               SizedBox(height: 65),
+              // Dropdown for selecting emergency type
               DropdownButtonFormField<String>(
                 value: selectedEmergency,
                 items: emergencyItems.map((String value) {
@@ -266,7 +102,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
                 }).toList(),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.fromLTRB(12, 12, 8, 0),
+                  contentPadding: EdgeInsets.all(1),
                   labelText: "Select Emergency",
                 ),
                 onChanged: (String? value) {
@@ -276,6 +112,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
                 },
               ),
               SizedBox(height: 30),
+              // Dropdown for selecting location
               DropdownButtonFormField<String>(
                 value: selectedLocation,
                 items: locationItems.map((String value) {
@@ -296,6 +133,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
                 },
               ),
               SizedBox(height: 40),
+              // Note section
               Text(
                 'Note:',
                 style: TextStyle(
@@ -310,6 +148,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
                 style: TextStyle(fontSize: 15, color: Colors.black54),
               ),
               SizedBox(height: 130),
+              // Buttons for messaging and calling
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -322,10 +161,10 @@ class _UserReportScreenState extends State<UserReportScreen> {
                         _sendMessageToOwner();
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blue,
+                        backgroundColor: Colors.blue,
                       ),
                       icon: Icon(Icons.message),
-                      label: Text('Message', style: TextStyle(fontSize: 16)),
+                      label: Text('Message', style: TextStyle(fontSize: 16,color: Colors.white)),
                     ),
                   ),
                   Container(
@@ -334,10 +173,10 @@ class _UserReportScreenState extends State<UserReportScreen> {
                     child: ElevatedButton.icon(
                       onPressed: _makePhoneCall,
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.green,
+                        backgroundColor: Colors.green,
                       ),
                       icon: Icon(Icons.call),
-                      label: Text('Call', style: TextStyle(fontSize: 16)),
+                      label: Text('Call', style: TextStyle(fontSize: 16,color: Colors.white)),
                     ),
                   ),
                 ],
@@ -349,31 +188,20 @@ class _UserReportScreenState extends State<UserReportScreen> {
     );
   }
 
+  // Function to send a message to the owner
   void _sendMessageToOwner() async {
     if (selectedEmergency != null && selectedLocation != null) {
       String message = 'Emergency: $selectedEmergency, Location: $selectedLocation';
 
       try {
         // Get the current user's document from the users collection
-        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser?.uid).get();
+        DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser?.uid);
+        DocumentSnapshot userSnapshot = await userRef.get();
 
-        // Debugging output
-        print('User document data: ${userSnapshot.data()}');
-
-        // Check if the user document exists and is not empty
-        if (userSnapshot.exists && userSnapshot.data() != null) {
+        // Check if the user document exists
+        if (userSnapshot.exists) {
           // Access the username field from the user document
-          String? username = userSnapshot['username'];
-
-          // Additional check for username
-          if (username == null) {
-            print('Username is null in the user document');
-            return;
-          }
-
-          // Ensure the 'emergencies' collection exists
-          var emergencyCollection = FirebaseFirestore.instance.collection('emergencies');
-          await emergencyCollection.doc().set({}, SetOptions(merge: true));
+          String username = userSnapshot['username'];
 
           // Send message to Firestore
           await FirebaseFirestore.instance.collection('messages').add({
@@ -385,7 +213,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
           print('Message sent to owner');
 
           // Store emergency data in Firestore
-          await emergencyCollection.add({
+          await FirebaseFirestore.instance.collection('emergencies').add({
             'type': selectedEmergency,
             'location': selectedLocation,
             'reportedBy': FirebaseAuth.instance.currentUser?.uid,
@@ -400,7 +228,16 @@ class _UserReportScreenState extends State<UserReportScreen> {
             selectedLocation = null;
           });
         } else {
-          print('User document does not exist or is empty');
+          // Create the user document if it doesn't exist
+          await userRef.set({
+            'username': 'Unknown', // Default value, replace with actual username if available
+            'phonenumber': 'Unknown', // Default value, replace with actual phone number if available
+            'email': FirebaseAuth.instance.currentUser?.email ?? 'Unknown',
+          });
+          print('User document created');
+
+          // Retry sending the message after creating the user document
+          _sendMessageToOwner();
         }
       } catch (e) {
         print('Failed to send message: $e');
@@ -410,6 +247,7 @@ class _UserReportScreenState extends State<UserReportScreen> {
     }
   }
 
+  // Function to make a phone call
   void _makePhoneCall() async {
     print('Making a phone call to the owner');
     await FlutterPhoneDirectCaller.callNumber('7020357477');
